@@ -7,6 +7,10 @@ resource "google_container_cluster" "cluster" {
   initial_node_count        = 1
   remove_default_node_pool  = true
 
+  node_locations = [
+    "${var.zone}",
+  ]
+
   timeouts {
     create = "30m"
     update = "30m"
@@ -68,5 +72,47 @@ resource "google_container_node_pool" "worker_pool" {
   autoscaling {
     min_node_count  = "${var.worker_pool_node_count}"
     max_node_count  = "${var.worker_pool_node_count_burstable}"
+  }
+}
+
+resource "google_container_node_pool" "preemptible_pool" {
+  provider            = "google-beta"
+  project             = "${var.project}"
+  cluster             = "${google_container_cluster.cluster.name}"
+  location            = "${var.region}"
+  initial_node_count  = "${var.preemptible_pool_node_count}"
+  version             = "${var.master_version}"
+
+  node_config {
+    preemptible   = true
+    machine_type  = "${var.preemptible_pool_machine_type}"
+    disk_size_gb  = "${var.preemptible_pool_disk_size}"
+    disk_type     = "${var.preemptible_pool_disk_type}"
+
+    # https://developers.google.com/identity/protocols/googlescopes
+    oauth_scopes = [
+      "compute-rw",
+      "storage-ro",
+      "logging-write",
+      "monitoring",
+      "https://www.googleapis.com/auth/service.management",
+      "https://www.googleapis.com/auth/sqlservice.admin"
+    ]
+
+    taint {
+      key = "PreemptibleWorkloadOnly"
+      value = "true"
+      effect = "NO_SCHEDULE"
+    }
+  }
+
+  management {
+    auto_repair   = true
+    auto_upgrade  = true
+  }
+
+  autoscaling {
+    min_node_count  = "${var.preemptible_pool_node_count}"
+    max_node_count  = "${var.preemptible_pool_node_count_burstable}"
   }
 }

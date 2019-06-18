@@ -7,6 +7,10 @@ resource "google_container_cluster" "cluster" {
   initial_node_count        = 1
   remove_default_node_pool  = true
 
+  node_locations = [
+    "${var.zone}",
+  ]
+
   timeouts {
     create = "30m"
     update = "30m"
@@ -33,6 +37,42 @@ resource "google_container_cluster" "cluster" {
     daily_maintenance_window {
       start_time = "01:00"
     }
+  }
+}
+
+resource "google_container_node_pool" "system_pool" {
+  provider            = "google"
+  project             = "${var.project}"
+  cluster             = "${google_container_cluster.cluster.name}"
+  location            = "${var.region}"
+  initial_node_count  = "${var.system_pool_node_count}"
+  version             = "${var.master_version}"
+
+  node_config {
+    machine_type  = "${var.system_pool_machine_type}"
+    disk_size_gb  = "${var.system_pool_disk_size}"
+    disk_type     = "${var.system_pool_disk_type}"
+
+    # https://developers.google.com/identity/protocols/googlescopes
+    oauth_scopes = [
+      "compute-rw",
+      "storage-ro",
+      "logging-write",
+      "monitoring",
+      "https://www.googleapis.com/auth/service.management",
+      "https://www.googleapis.com/auth/sqlservice.admin"
+    ]
+
+    taint {
+      key = "SystemAddonsOnly"
+      value = "true"
+      effect = "PREFER_NO_SCHEDULE"
+    }
+  }
+
+  management {
+    auto_repair   = true
+    auto_upgrade  = true
   }
 }
 
