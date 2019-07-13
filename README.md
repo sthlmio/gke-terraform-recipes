@@ -12,7 +12,6 @@ oauth_scopes = [
   "storage-ro",
   "logging-write",
   "monitoring",
-  "https://www.googleapis.com/auth/service.management",
-  "https://www.googleapis.com/auth/sqlservice.admin"
+  "https://www.googleapis.com/auth/service.management"
 ]
 ```

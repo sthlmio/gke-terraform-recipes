@@ -1,6 +1,6 @@
 region                            = "europe-north1"
 zone                              = "europe-north1-a"
-master_version                    = "1.13.6-gke.6"
+master_version                    = "1.13.7-gke.8"
 cluster_name                      = "production"
 
 system_pool_machine_type          = "n1-standard-1"
