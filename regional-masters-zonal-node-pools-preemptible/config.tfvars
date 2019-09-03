@@ -1,7 +1,7 @@
 region = "europe-north1"
 zone = "europe-north1-a"
 master_version = "1.13.7-gke.24"
-cluster_name = "production"
+enable_istio = true
 
 worker_pool_machine_type = "n1-standard-1"
 worker_pool_node_count = 0

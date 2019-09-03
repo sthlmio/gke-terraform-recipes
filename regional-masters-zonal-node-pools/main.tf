@@ -1,5 +1,5 @@
 resource "google_container_cluster" "cluster" {
-  provider                  = "google"
+  provider                  = "google-beta"
   name                      = var.cluster_name
   project                   = var.project
   location                  = var.region
@@ -36,6 +36,13 @@ resource "google_container_cluster" "cluster" {
   maintenance_policy {
     daily_maintenance_window {
       start_time = "01:00"
+    }
+  }
+
+  addons_config {
+    istio_config {
+      disabled = var.enable_istio ? false : true
+      auth = "AUTH_MUTUAL_TLS"
     }
   }
 }

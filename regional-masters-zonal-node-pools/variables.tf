@@ -18,6 +18,10 @@ variable "master_version" {
   description = "Master version (e.g 1.13.6-gke.6)"
 }
 
+variable "enable_istio" {
+  description = "Enable Istio service mesh"
+}
+
 variable "system_pool_node_count" {
   description = "Number of system pool nodes (per zone, since it's regional)"
 }
