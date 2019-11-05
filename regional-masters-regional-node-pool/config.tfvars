@@ -1,5 +1,5 @@
 region = "europe-north1"
-master_version = "1.13.7-gke.24"
+master_version = "1.14.7-gke.14"
 enable_istio = true
 
 worker_pool_machine_type = "n1-standard-1"
